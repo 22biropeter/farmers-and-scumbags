@@ -1,16 +1,33 @@
 import { create } from "zustand"
-import type { TileType } from "../types/Maps"
+import type { TileType, GenerationType } from "../types/Maps"
 
 type MapStoreType = {
-    map: TileType[][]
+    map: TileType[][],
+    size: number,
+    generation: GenerationType,
+    regenerate: ()=>void
+    setSize: (to:number)=>void
+    setGeneration: (to:GenerationType)=>void
 }
 
-export const useMapStore = create<MapStoreType>((set)=>({
-    map: generateMap(30)
-}))
+export const useMapStore = create<MapStoreType>((set) => ({
+    map: generateMap(50,"default"),
+    size: 50,
+    generation: "default",
+    regenerate: () => set((state)=>({ map: generateMap(state.size,state.generation)})),
+    setSize: (to:number) => set({ size: to}),
+    setGeneration: (to:GenerationType) => set({ generation: to}),
+}));
 
-function generateMap(size: number):TileType[][]{
+function generateMap(size: number,generation:GenerationType):TileType[][]{
+
+    let islandconstant:number = Math.floor(generation == "continent" ? size/20 + 1 : 
+                                generation == "islands" ? size*size/5 + 1: 
+                                generation == "default" ? size/2 + 1: 
+                                0)
+
     let tempMap:TileType[][] = []
+
     for(let r = 0; r<size; r++){
         let line:TileType[] = []
         for(let c = 0; c<size; c++){
@@ -23,7 +40,9 @@ function generateMap(size: number):TileType[][]{
         tempMap.push(line)
     }
 
-    addGrass(tempMap,Math.floor(size/2))
+    console.log(generation)
+    console.log(islandconstant)
+    addGrass(tempMap,islandconstant)
 
     return tempMap
 }
@@ -52,7 +71,6 @@ function addGrass(map: TileType[][], seedcount:number):TileType[][]{
 
     let safety = 1000
     while (!isBalanced() && safety>0) {growGrass(map);safety--} 
-    console.log(safety)
 
     return map;
 }
