@@ -44,6 +44,8 @@ function generateMap(size: number,generation:GenerationType):TileType[][]{
     console.log(islandconstant)
     addGrass(tempMap,islandconstant)
 
+    if (generation== "continent") addRivers(tempMap,islandconstant)
+
     return tempMap
 }
 
@@ -89,6 +91,59 @@ function growGrass(map: TileType[][]):TileType[][]{
                 if(Math.random() < 0.5) map[r][Math.max(c-1, 0)].ground = "grass";
             }
         }
+    }
+    return map;
+}
+
+function addRivers(map: TileType[][], seedcount:number):TileType[][]{
+    let x:number = 0;
+    let y:number = 0;
+
+    
+
+    for (let i:number = 0; i<seedcount;i++){
+
+        let x:number = 0;
+        let y:number = 0;
+        let dir = Math.random();
+
+        if (dir < 0.25)       x = 1;   // right
+        else if (dir < 0.50)  x = -1;  // left
+        else if (dir < 0.75)  y = 1;   // up
+        else                  y = -1;  // down
+
+        let r = 0;
+        let c = 0;
+        let safety2 = 1000
+        do {
+            r = Math.floor(Math.random()*map.length)
+            c = Math.floor(Math.random()*map[r].length)
+            safety2--
+        } while (map[r][c].ground == "water" && safety2>0)
+        
+        map[r][c].ground = "water";
+
+        let safety = 100000
+        while(safety>0){
+            safety--
+            if (Math.random()<0.7){
+                r+=y
+                c+=x
+            }else {
+                r+=x
+                c+=y
+            }
+            
+
+            if (map.length<=r) break
+            if (r<0) break
+            if (map[r].length<=c) break
+            if (c<0) break
+            if (map[r][c].ground == "water") break
+
+            map[r][c].ground = "water"
+        }
+
     }
     return map;
 }
