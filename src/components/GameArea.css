@@ -1,0 +1,17 @@
+.gameArea{
+    display: grid;
+    max-height: 80vh;
+    aspect-ratio: 1;
+
+
+    >div{
+        aspect-ratio: 1;
+        border: 1px solid black;
+    }
+    >div.water{
+        background-color: blue;
+    }
+    >div.grass{
+        background-color: green;
+    }
+}
