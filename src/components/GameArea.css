@@ -14,4 +14,13 @@
     >div.grass{
         background-color: green;
     }
+    >div.sand{
+        background-color: rgb(236, 197, 124);
+    }
+    >div.mountain{
+        background-color: rgb(51, 50, 47);
+    }
+    >div.stone{
+        background-color: rgb(51, 50, 47);
+    }
 }

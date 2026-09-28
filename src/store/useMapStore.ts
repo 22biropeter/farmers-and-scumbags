@@ -5,21 +5,36 @@ type MapStoreType = {
     map: TileType[][],
     size: number,
     generation: GenerationType,
+    mapSeed: number,
     regenerate: ()=>void
     setSize: (to:number)=>void
     setGeneration: (to:GenerationType)=>void
+    setSeed: (to:number)=>void
 }
 
+
 export const useMapStore = create<MapStoreType>((set) => ({
-    map: generateMap(50,"default"),
+    map: generateMap(50,"default",123456789),
     size: 50,
     generation: "default",
-    regenerate: () => set((state)=>({ map: generateMap(state.size,state.generation)})),
+    mapSeed: 123456789,
+    regenerate: () => set((state)=>({ map: generateMap(state.size,state.generation,state.mapSeed)})),
     setSize: (to:number) => set({ size: to}),
     setGeneration: (to:GenerationType) => set({ generation: to}),
+    setSeed: (to:number) => set({ mapSeed: to}),
 }));
 
-function generateMap(size: number,generation:GenerationType):TileType[][]{
+function mulberry32(seed: number): () => number {
+  return function () {
+    let t = (seed += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function generateMap(size: number,generation:GenerationType, seed: number):TileType[][]{
+    const random = () => {seed++;return mulberry32(seed)()} 
 
     let islandconstant:number = Math.floor(generation == "continent" ? size/20 + 1 : 
                                 generation == "islands" ? size*size/5 + 1: 
@@ -42,14 +57,17 @@ function generateMap(size: number,generation:GenerationType):TileType[][]{
 
     console.log(generation)
     console.log(islandconstant)
-    addGrass(tempMap,islandconstant)
+    addGrass(tempMap,islandconstant,random)
+    addSand(tempMap)
+    addStone(tempMap,islandconstant/2,random)
 
-    if (generation== "continent") addRivers(tempMap,islandconstant)
+    if (generation == "continent") addRivers(tempMap,islandconstant,random)
+    
 
     return tempMap
 }
 
-function addGrass(map: TileType[][], seedcount:number):TileType[][]{
+function addGrass(map: TileType[][], seedcount:number, random: ()=>number){
     
     const isBalanced = ():boolean => {
         let grass:number = 0
@@ -66,36 +84,78 @@ function addGrass(map: TileType[][], seedcount:number):TileType[][]{
     
     for (let i:number = 0; i<seedcount;i++){
         if (isBalanced()) break
-        let r = Math.floor(Math.random()*map.length)
-        let c = Math.floor(Math.random()*map[r].length)
+        let r = Math.floor(random()*map.length)
+        let c = Math.floor(random()*map[r].length)
         map[r][c].ground = "grass"
     }
 
     let safety = 1000
-    while (!isBalanced() && safety>0) {growGrass(map);safety--} 
-
-    return map;
+    while (!isBalanced() && safety>0) {growGrass(map,random);safety--} 
 }
 
-function growGrass(map: TileType[][]):TileType[][]{
+function addStone(map: TileType[][], seedcount:number, random: ()=>number){
+
+    const isBalanced = ():boolean => {
+        let grass:number = 0
+        map.forEach(line => {
+            line.forEach(tile=>tile.ground == "grass"?grass++:grass)
+        });
+        let mountain:number = 0
+        map.forEach(line => {
+            line.forEach(tile=>tile.ground == "mountain"?mountain++:mountain)
+        });
+
+        return grass/10>mountain
+    }
+
+    for (let i:number = 0; i<seedcount;i++){
+        let r = Math.floor(random()*map.length)
+        let c = Math.floor(random()*map[r].length)
+        if (map[r][c].ground=="grass"){
+            if (!isBalanced()) break;
+            map[r][c].ground = "mountain"
+        }
+        else
+            i--
+    }
+    while (isBalanced()) growStone(map,random)
+}
+
+function growStone(map: TileType[][], random: ()=>number){
+    for(let r = 0; r<map.length; r++){
+        for(let c = 0; c<map[r].length; c++){
+            if(map[r][c].ground == "mountain"){
+                // Down
+                if(random() < 0.4) map[Math.min(r+1, map.length - 1)][c].ground = "mountain";
+                // Up
+                if(random() < 0.5) map[Math.max(r-1, 0)][c].ground = "mountain";
+                // Right
+                if(random() < 0.4) map[r][Math.min(c+1, map[r].length - 1)].ground = "mountain";
+                // Left
+                if(random() < 0.5) map[r][Math.max(c-1, 0)].ground = "mountain";
+            }
+        }
+    }
+}
+
+function growGrass(map: TileType[][], random: ()=>number){
     for(let r = 0; r<map.length; r++){
         for(let c = 0; c<map[r].length; c++){
             if(map[r][c].ground == "grass"){
                 // Down
-                if(Math.random() < 0.4) map[Math.min(r+1, map.length - 1)][c].ground = "grass";
+                if(random() < 0.4) map[Math.min(r+1, map.length - 1)][c].ground = "grass";
                 // Up
-                if(Math.random() < 0.5) map[Math.max(r-1, 0)][c].ground = "grass";
+                if(random() < 0.5) map[Math.max(r-1, 0)][c].ground = "grass";
                 // Right
-                if(Math.random() < 0.4) map[r][Math.min(c+1, map[r].length - 1)].ground = "grass";
+                if(random() < 0.4) map[r][Math.min(c+1, map[r].length - 1)].ground = "grass";
                 // Left
-                if(Math.random() < 0.5) map[r][Math.max(c-1, 0)].ground = "grass";
+                if(random() < 0.5) map[r][Math.max(c-1, 0)].ground = "grass";
             }
         }
     }
-    return map;
 }
 
-function addRivers(map: TileType[][], seedcount:number):TileType[][]{
+function addRivers(map: TileType[][], seedcount:number, random: ()=>number){
     let x:number = 0;
     let y:number = 0;
 
@@ -105,7 +165,7 @@ function addRivers(map: TileType[][], seedcount:number):TileType[][]{
 
         let x:number = 0;
         let y:number = 0;
-        let dir = Math.random();
+        let dir = random();
 
         if (dir < 0.25)       x = 1;   // right
         else if (dir < 0.50)  x = -1;  // left
@@ -116,8 +176,8 @@ function addRivers(map: TileType[][], seedcount:number):TileType[][]{
         let c = 0;
         let safety2 = 1000
         do {
-            r = Math.floor(Math.random()*map.length)
-            c = Math.floor(Math.random()*map[r].length)
+            r = Math.floor(random()*map.length)
+            c = Math.floor(random()*map[r].length)
             safety2--
         } while (map[r][c].ground == "water" && safety2>0)
         
@@ -126,7 +186,7 @@ function addRivers(map: TileType[][], seedcount:number):TileType[][]{
         let safety = 100000
         while(safety>0){
             safety--
-            if (Math.random()<0.7){
+            if (random()<0.7){
                 r+=y
                 c+=x
             }else {
@@ -145,5 +205,21 @@ function addRivers(map: TileType[][], seedcount:number):TileType[][]{
         }
 
     }
-    return map;
+}
+
+function addSand(map: TileType[][]){
+    for(let r = 0; r<map.length; r++){
+        for(let c = 0; c<map[r].length; c++){
+            if(map[r][c].ground == "grass"){
+                if(
+                    map[r][Math.max(c-1, 0)].ground == "water" ||
+                    map[r][Math.min(c+1, map[r].length - 1)].ground == "water" ||
+                    map[Math.max(r-1, 0)][c].ground == "water" ||
+                    map[Math.min(r+1, map.length - 1)][c].ground == "water"
+                ){
+                    map[r][c].ground = "sand"
+                }
+            }
+        }
+    }
 }
