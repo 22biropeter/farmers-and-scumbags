@@ -14,8 +14,8 @@ type MapStoreType = {
 
 
 export const useMapStore = create<MapStoreType>((set) => ({
-    map: generateMap(50,"default",123456789),
-    size: 50,
+    map: generateMap(20,"default",123456789),
+    size: 20,
     generation: "default",
     mapSeed: 123456789,
     regenerate: () => set((state)=>({ map: generateMap(state.size,state.generation,state.mapSeed)})),

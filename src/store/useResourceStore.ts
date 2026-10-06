@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import type { ResourceType } from "../types/Maps";
 
-type ResourceStoreType = {
+export type ResourceStoreType = {
     gold: number,
     wood: number,
     stone: number,
@@ -15,10 +15,10 @@ type ResourceStoreType = {
 }
 
 export const useResourceStore = create<ResourceStoreType>((set)=>({
-    gold: 1000,
-    wood: 0,
-    stone: 0,
-    food: 0,
+    gold: 1500,
+    wood: 1500,
+    stone: 1500,
+    food: 1500,
 
     spendGold: (amount: number) => { 
         if(amount > 0 && amount <= useResourceStore.getState().gold) {

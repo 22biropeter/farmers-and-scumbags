@@ -7,6 +7,15 @@
     >div{
         aspect-ratio: 1;
         border: 1px solid black;
+        user-select: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 100%;
+
+        &:hover{
+            border-color: red;
+        }
     }
     >div.water{
         background-color: blue;
@@ -22,5 +31,28 @@
     }
     >div.stone{
         background-color: rgb(51, 50, 47);
+    }
+}
+
+.building-select{
+    display: flex;
+    justify-content: start  ;
+    margin-top: 1rem;
+    gap: 1rem;
+
+    .building-select-btn{
+        padding: 0.5rem 1rem;
+        border: 1px solid black;
+        cursor: pointer;
+        font-size: 2rem;
+        transition: all 0.2s ease-in-out;
+
+        &.active{
+            background-color: lightgray;
+        }
+
+        &:hover{
+            background-color: lightgray;
+        }
     }
 }
