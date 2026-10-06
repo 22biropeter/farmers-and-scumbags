@@ -1,0 +1,10 @@
+.resourceBar{
+    display: flex;
+    justify-content: start;
+
+    .resourceItem{
+        padding: 0.5rem 1rem;
+        border: 1px solid black;
+        font-size: 1rem;
+    }
+}

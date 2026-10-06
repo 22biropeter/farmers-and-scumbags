@@ -7,10 +7,12 @@ import { useState } from "react"
 import type { TileType } from "../types/Maps"
 import {BuildingCosts} from "../types/Maps"
 import { useResourceStore } from "../store/useResourceStore"
+import { useEconomyStore } from "../store/useEconomyStore"
 
 const GameArea = () => {
   const buildingStore = useBuildingStore()
   const resourceStore = useResourceStore()
+  const economyStore = useEconomyStore()
   const [, forceUpdate] = useState(0)
   
   
@@ -26,6 +28,8 @@ const GameArea = () => {
     resourceStore.spendResource("food", BuildingCosts[buildingStore.building].food)
     resourceStore.spendResource("wood", BuildingCosts[buildingStore.building].wood)
     resourceStore.spendResource("stone", BuildingCosts[buildingStore.building].stone)
+
+    economyStore.addBuilding(buildingStore.building)
 
     forceUpdate(n => n + 1)
   }

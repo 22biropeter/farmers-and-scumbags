@@ -1,24 +1,28 @@
 import { create } from "zustand";
 import type { ResourceType } from "../types/Maps";
+import type { EconomicStats } from "./useEconomyStore";
 
 export type ResourceStoreType = {
     gold: number,
     wood: number,
     stone: number,
     food: number,
+    population: number,
 
     spendGold: (amount: number) => boolean,
     receiveGold: (amount: number) => void,
 
     addResource: (type: ResourceType, amount: number) => void,
     spendResource: (type: ResourceType, amount: number) => boolean,
+    applyEconomicChange: (stats: EconomicStats) => void,
 }
 
 export const useResourceStore = create<ResourceStoreType>((set)=>({
-    gold: 1500,
-    wood: 1500,
-    stone: 1500,
-    food: 1500,
+    gold: 500,
+    wood: 500,
+    stone: 500,
+    food: 100,
+    population: 10,
 
     spendGold: (amount: number) => { 
         if(amount > 0 && amount <= useResourceStore.getState().gold) {
@@ -37,5 +41,14 @@ export const useResourceStore = create<ResourceStoreType>((set)=>({
             return true;
         }
         return false;
+    },
+    applyEconomicChange: (stats: EconomicStats) => {
+        set((state) => ({
+            wood:  Math.max(0, state.wood + stats.wood),
+            stone: Math.max(0, state.stone + stats.stone),
+            food: Math.max(0, state.food + stats.food),
+            gold: Math.max(0, state.gold + stats.gold)  ,
+            population: Math.max(0, state.population + stats.population),
+        }));
     }
 }))

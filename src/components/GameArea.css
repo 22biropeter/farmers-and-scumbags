@@ -46,6 +46,7 @@
         cursor: pointer;
         font-size: 2rem;
         transition: all 0.2s ease-in-out;
+        
 
         &.active{
             background-color: lightgray;

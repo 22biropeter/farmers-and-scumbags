@@ -17,8 +17,8 @@ export type ResourceCost = {
 };
 
 export const BuildingCosts: Record<BuildingType, ResourceCost> = {
-    farm:   { gold: 100, wood: 20, stone: 0, food: 0 },
+    farm:   { gold: 10, wood: 50, stone: 0, food: 0 },
     house:  { gold: 0,   wood: 50, stone: 0, food: 100 },
     lumber: { gold: 20,   wood: 0, stone: 0, food: 20 },
-    mine:   { gold: 100,   wood: 100, stone: 0, food: 100 },
+    mine:   { gold: 10,   wood: 100, stone: 0, food: 100 },
 };
