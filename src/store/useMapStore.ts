@@ -62,9 +62,27 @@ function generateMap(size: number,generation:GenerationType, seed: number):TileT
     addStone(tempMap,islandconstant/2,random)
 
     if (generation == "continent") addRivers(tempMap,islandconstant,random)
-    
+
+    placeTownHall(tempMap)
 
     return tempMap
+}
+
+function placeTownHall(map: TileType[][]){
+    const centerRow = Math.floor(map.length / 2)
+    const centerCol = Math.floor(map[0].length / 2)
+
+    for (let radius = 0; radius <= Math.max(map.length, map[0].length); radius++) {
+        for (let r = centerRow - radius; r <= centerRow + radius; r++) {
+            for (let c = centerCol - radius; c <= centerCol + radius; c++) {
+                if (r < 0 || c < 0 || r >= map.length || c >= map[r].length) continue
+                if (map[r][c].ground === "grass" && !map[r][c].building) {
+                    map[r][c].building = "townhall"
+                    return
+                }
+            }
+        }
+    }
 }
 
 function addGrass(map: TileType[][], seedcount:number, random: ()=>number){

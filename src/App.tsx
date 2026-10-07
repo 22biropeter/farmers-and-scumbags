@@ -12,6 +12,7 @@ const buildingOptions: { type: BuildingType; icon: string }[] = [
   { type: "farm", icon: "🌾" },
   { type: "mine", icon: "⛏️" },
   { type: "lumber", icon: "🪚" },
+  { type: "road", icon: "⬛" },
 ]
 
 const resourceIcons = { gold: "🪙", wood: "🪵", stone: "🪨", food: "🥖" }

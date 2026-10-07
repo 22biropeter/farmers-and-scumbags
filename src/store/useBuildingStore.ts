@@ -22,11 +22,13 @@ export const useBuildingStore = create<BuildingStoreType>((set, get) => ({
     canBeBuilt: (type: GroundType) => {
         const { building } = get();
 
+        if (building === "townhall") return false;
         if (type === "water") return false;
-        if (type === "mountain" && building !== "mine") return false;
-        if (type === "sand" && building !== "farm") return false;
-        if (type === "grass" && building === "mine") return false;
         if (building === "mine" && type !== "mountain") return false;
+        if (building === "farm" && type !== "sand" && type !== "grass") return false;
+        if (type === "mountain" && building !== "mine" && building !== "road") return false;
+        if (type === "sand" && building !== "farm" && building !== "road") return false;
+        if (type === "grass" && building === "mine") return false;
 
         const cost = BuildingCosts[building];
         return checkForResources(cost);

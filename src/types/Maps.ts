@@ -1,5 +1,5 @@
 export type GroundType = "grass" | "water" | "mountain" | "sand"
-export type BuildingType = "house" | "mine" | "lumber" | "farm"
+export type BuildingType = "house" | "mine" | "lumber" | "farm" | "road" | "townhall"
 export type ResourceType = "wood" | "stone" | "food"
 export type GenerationType = "continent" | "default" | "islands"
 
@@ -17,8 +17,10 @@ export type ResourceCost = {
 };
 
 export const BuildingCosts: Record<BuildingType, ResourceCost> = {
-    farm:   { gold: 10, wood: 50, stone: 0, food: 0 },
-    house:  { gold: 0,   wood: 50, stone: 0, food: 100 },
-    lumber: { gold: 20,   wood: 0, stone: 0, food: 20 },
-    mine:   { gold: 10,   wood: 100, stone: 0, food: 100 },
+    farm:     { gold: 10, wood: 50, stone: 0, food: 0 },
+    house:    { gold: 0,  wood: 50, stone: 0, food: 100 },
+    lumber:   { gold: 20, wood: 0,  stone: 0, food: 20 },
+    mine:     { gold: 10, wood: 100, stone: 0, food: 100 },
+    road:     { gold: 0,  wood: 0, stone: 10, food: 0 },
+    townhall: { gold: 0,  wood: 0,  stone: 0, food: 0 },
 };
