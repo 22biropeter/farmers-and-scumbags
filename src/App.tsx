@@ -1,18 +1,22 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import GameArea from "./components/GameArea"
-import ResourceBar from "./components/ResourceBar"
-import BuildingSelectorBar from "./components/BuildingSelectorBar"
+import { BrowserRouter, Route, Routes } from "react-router-dom"
+import IndexPage from "./pages/IndexPage"
+import LoginPage from "./pages/LoginPage"
+import RegistrationPage from "./pages/RegistrationPage"
+
 
 export const queryClient = new QueryClient()
 
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-    <div>
-      <ResourceBar />
-        <GameArea/>
-      <BuildingSelectorBar/>
-    </div>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<IndexPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegistrationPage />} />
+        </Routes>
+      </BrowserRouter>
     </QueryClientProvider>
   )
 }
