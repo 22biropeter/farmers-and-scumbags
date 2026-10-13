@@ -68,7 +68,7 @@ const LoginPage = () => {
                 </form>
 
                 <p className={styles.loginPrompt}>
-                    New to the farm? <Link className={styles.loginLink} to="/register">Create an account</Link>
+                    R u new here fellah? <Link className={styles.loginLink} to="/register">Create an account</Link>
                 </p>
             </section>
         </main>
